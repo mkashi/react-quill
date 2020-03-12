@@ -35,6 +35,7 @@ var QuillComponent = createClass({
 		onKeyDown: T.func,
 		onKeyUp: T.func,
 		preserveWhitespace: T.bool,
+		quillHasFocus: T.bool,
 
 		modules: function(props) {
 			var isNotObject = T.object.apply(this, arguments);
@@ -126,6 +127,7 @@ var QuillComponent = createClass({
 		'onKeyPress',
 		'onKeyDown',
 		'onKeyUp',
+		'quillHasFocus',
 	],
 
 	getDefaultProps: function() {
@@ -206,11 +208,18 @@ var QuillComponent = createClass({
 		// Restore editor from Quill's native formats in regeneration scenario
 		if (this.quillDelta) {
 			this.editor.setContents(this.quillDelta);
-			this.editor.setSelection(this.quillSelection);		
-			this.editor.focus();
+			if (this.quillSelection) {
+				this.editor.setSelection(this.quillSelection);						
+			}
+
+			if (this.editor.quillHasFocus) {
+				this.editor.focus();
+			}
+
 			this.quillDelta = this.quillSelection = null;
 			return;
 		}
+
 		if (this.state.value) {
 			this.setEditorContents(this.editor, this.state.value);
 			return;
